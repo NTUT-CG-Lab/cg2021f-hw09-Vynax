@@ -133,7 +133,7 @@
             <!--閥值-->
             <div class="labelLayout">
                 <label for="isovalueSlider">閥值:0/0</label>
-                <input class="labelInput" id="isovalueSlider" type="range" name="settingForm" min=0 max=1000>
+                <input class="labelInput" id="isovalueSlider" type="range" name="settingForm" min=0 max=255>
             </div>
 
             <!--紋理-->
@@ -171,10 +171,10 @@
             //第3個參數為 完成狀況，有完成 true/未完成 false
             //有幾個項目就呼叫幾個 addChild
             //addChild 要比 renderModal 先呼叫
-            so.addChild("讀取文件並顯示資訊", 4, true);
-            so.addChild("生成模型", 2, true);
-            so.addChild("閥值控制", 1, false);
-            so.addChild("文件下載", 1, false);
+            so.addChild("讀取檔案並顯示資訊", 4, true);
+            so.addChild("顯示模型", 2, true);
+            so.addChild("調整閥值", 1, true);
+            so.addChild("下載檔案", 1, true);
             so.addChild("材質更換", 2, false);
 
             //產生自評表，參數如下所示
@@ -236,9 +236,9 @@
                 }
             })
 
-            let elements = document.getElementsByName('settingForm')
+            let elements = document.getElementsByName('settingForm');
 
-            // RAW文件讀取
+            // RAW檔案讀取
             elements[0].addEventListener('change', (evt) => {
                 let fr = new FileReader();
 
@@ -259,7 +259,7 @@
                 let depth = values[3];
                 let byte = values[4];
 
-                let max = Math.max(width, height, depth); // 採用的 Marching Cubes js，長寬高必須等值
+                let max_val = Math.max(width, height, depth); // 採用的 Marching Cubes js，長寬高必須等值
 
                 let data = null;
                 let paddingData = null;
@@ -268,20 +268,28 @@
                 fr.onload = () => {
                     let result = fr.result;
 
-                    if (byte == 'uint8') {
+                    if (byte === 'uint8') {
                         data = new Uint8Array(result);
 
-                        paddingData = new Uint8Array(max * max * max);
+                        paddingData = new Uint8Array(max_val * max_val * max_val);
+                        console.log(paddingData);
 
+                        for (let i = 0; i < data.length; i++) {
+                            paddingData[i] = data[i];
+                        }
+                        console.log(paddingData);
                         /* 助教上課講的版本
                         modelView.loadData(paddingData, max, 75);
                         */
 
                         //助教在 Line群組上傳的版本
                         modelView.databuffer = paddingData;
-                        modelView.size = max;
+                        modelView.size = max_val;
                         modelView.threshold = 75;
                         modelView.updateModel();
+
+                        console.log("長/寬/深度: " + width + "/" + height + "/" + depth);
+                        console.log("位元: " + byte + "bits");
                     }
                 }
 
@@ -303,15 +311,18 @@
                 */
 
                 let dlLink = document.createElement('a');
+                // TODO: download file?
                 dlLink.href = URL.createObjectURL(blob);
                 dlLink.download = 'model.stl';
-
                 dlLink.click();
             })
 
             // 閥值設定
             elements[2].addEventListener('click', (evt) => {
                 let isovalue = evt.srcElement.value;
+                let text = "閥值" + isovalue + "/255";
+                document.querySelector("label[for=isovalueSlider]").innerHTML = text;
+                console.log(text);
                 modelView.threshold = isovalue;
                 modelView.updateModel();
             })
@@ -319,8 +330,8 @@
             // 紋理設置
             elements[3].addEventListener('change', (evt) => {
                 let selectedTextureIndex = evt.srcElement.value;
-
-                modelView.updateModel();
+                // TODO
+                // modelView.updateModel();
             })
 
             // 模型網格顯示

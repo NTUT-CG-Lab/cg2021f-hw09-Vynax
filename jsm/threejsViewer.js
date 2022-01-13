@@ -68,17 +68,17 @@ class threejsViewer {
             this.camera.aspect = width / height
             this.camera.updateProjectionMatrix();
         })
-        let mesh = null;
+        this.mesh = null;
         /*助教上課講的版本
         this.loadData = (paddingData, size, isovalue) => {
         */
 
         // 助教在Line群組上傳圖片的版本
         this.loadData = () => {
-            mesh = new MarchingCubes(size);
-            mesh.material = new THREE.MeshPhongMaterial();
-            mesh.isolation = this.threshold;
-            mesh.field = this.databuffer;
+            this.mesh = new MarchingCubes(this.size);
+            this.mesh.material = new THREE.MeshPhongMaterial();
+            this.mesh.isolation = this.threshold;
+            this.mesh.field = this.databuffer;
 
             /* 助教上課講的版本
             mesh = new MarchingCubes(size);
@@ -86,36 +86,57 @@ class threejsViewer {
             mesh.isolation = isovalue;
             mesh.field = paddingData;
             */
-            this.scene.add(mesh);
+
+            this.mesh.position.set(0, 1, 0);
+            this.scene.add(this.mesh);
         }
 
         this.updateModel = () => {
             //geometry + material => mesh
-            let mesh = this.scene.getObjectByName('mesh');
+            let mesh1 = this.scene.getObjectByName('mesh');
 
-            if (mesh == null) {
+            if (mesh1 === undefined || mesh1 == null) {
                 //初始化
-                let mesh = new MarchingCubes(this.size);
-                mesh.name = 'mesh';
+                let mesh1 = new MarchingCubes(this.size);
+                mesh1.name = 'mesh';
+                mesh1.material = new THREE.MeshPhongMaterial();
+                /* switch (this.textureOption) {
+                    case 0:
+                        this.mesh.material = new THREE.MeshBasicMaterial({ color: 0xff00ff });
+                        break;
+                    case 1:
+                        this.mesh.material = new THREE.MeshPhongMaterial({ color: 0xff00ff });
+                        break;
+                    case 2:
+                        this.mesh.material = new THREE.MeshToonMaterial({ color: 0xff00ff });
+                        break;
+                    case 3:
+                        this.mesh.material = new THREE.MeshNormalMaterial({ color: 0xff00ff });
+                        break;
+                } */
 
-                if (this.textureOption == 0) {
-                    //mesh.material = ...
-                }
-                else if (this.textureOption == 1) {
-                    //mesh.material = ...
-                }
+                mesh1.isolation = this.threshold;
+                mesh1.field = this.databuffer;
+                // add
+                mesh1.position.set(0, 1, 0);
 
-                mesh.isolation = this.threshold;
-                mesh.field = this.databuffer;
-
+                this.scene.add(mesh1);
+                // return this.mesh;
             }
+            else {
+                mesh1.isolation = this.threshold;
+                mesh1.field = this.databuffer;
 
-            return mesh;
+                mesh1.position.set(0, 1, 0);
+            }
+            this.mesh = mesh1;
         }
 
         this.download = () => {
-            mesh.generateGeometry();
-            return mesh;
+            let geometry1 = this.mesh.generateGeometry();
+
+            let mesh2 = new THREE.Mesh(geometry1);
+            return mesh2;
         }
 
         this.renderScene()
