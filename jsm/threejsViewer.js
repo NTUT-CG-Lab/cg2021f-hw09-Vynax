@@ -89,6 +89,30 @@ class threejsViewer {
             this.scene.add(mesh);
         }
 
+        this.updateModel = () => {
+            //geometry + material => mesh
+            let mesh = this.scene.getObjectByName('mesh');
+
+            if (mesh == null) {
+                //初始化
+                let mesh = new MarchingCubes(this.size);
+                mesh.name = 'mesh';
+
+                if (this.textureOption == 0) {
+                    //mesh.material = ...
+                }
+                else if (this.textureOption == 1) {
+                    //mesh.material = ...
+                }
+
+                mesh.isolation = this.threshold;
+                mesh.field = this.databuffer;
+
+            }
+
+            return mesh;
+        }
+
         this.download = () => {
             mesh.generateGeometry();
             return mesh;

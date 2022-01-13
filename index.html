@@ -251,7 +251,7 @@
 
                 let filename = file.name;
 
-                filename = filename.split('_');
+                filename = filename.split('.');
                 let values = filename[0].split('_');
 
                 let width = values[1];
@@ -281,7 +281,7 @@
                         modelView.databuffer = paddingData;
                         modelView.size = max;
                         modelView.threshold = 75;
-                        modelView.loadData();
+                        modelView.updateModel();
                     }
                 }
 
@@ -293,22 +293,34 @@
                 let exporter = new STLExporter();
                 let mesh = modelView.download();
 
+                let result = exporter.parse(mesh, { binary: true });
+                let blob = new Blob([result], { type: 'application/octet-stream' });
+
+                /* 二選一，助教說有二進位比較快，所以選上面那兩行  
+
+                let result = exporter.parse(mesh, { binary: false });
+                let blob = new Blob([result], { type: 'text/plain' });
+                */
+
                 let dlLink = document.createElement('a');
+                dlLink.href = URL.createObjectURL(blob);
+                dlLink.download = 'model.stl';
+
                 dlLink.click();
             })
 
             // 閥值設定
             elements[2].addEventListener('click', (evt) => {
                 let isovalue = evt.srcElement.value;
-
-                modelView.loadData();
+                modelView.threshold = isovalue;
+                modelView.updateModel();
             })
 
             // 紋理設置
             elements[3].addEventListener('change', (evt) => {
                 let selectedTextureIndex = evt.srcElement.value;
 
-                modelView.loadData();
+                modelView.updateModel();
             })
 
             // 模型網格顯示
