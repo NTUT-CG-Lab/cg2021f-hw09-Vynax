@@ -273,7 +273,15 @@
 
                         paddingData = new Uint8Array(max * max * max);
 
+                        /* 助教上課講的版本
                         modelView.loadData(paddingData, max, 75);
+                        */
+
+                        //助教在 Line群組上傳的版本
+                        modelView.databuffer = paddingData;
+                        modelView.size = max;
+                        modelView.threshold = 75;
+                        modelView.loadData();
                     }
                 }
 

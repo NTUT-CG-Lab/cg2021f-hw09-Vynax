@@ -69,12 +69,23 @@ class threejsViewer {
             this.camera.updateProjectionMatrix();
         })
         let mesh = null;
+        /*助教上課講的版本
         this.loadData = (paddingData, size, isovalue) => {
+        */
+
+        // 助教在Line群組上傳圖片的版本
+        this.loadData = () => {
+            mesh = new MarchingCubes(size);
+            mesh.material = new THREE.MeshPhongMaterial();
+            mesh.isolation = this.threshold;
+            mesh.field = this.databuffer;
+
+            /* 助教上課講的版本
             mesh = new MarchingCubes(size);
             mesh.material = new THREE.MeshPhongMaterial();
             mesh.isolation = isovalue;
             mesh.field = paddingData;
-
+            */
             this.scene.add(mesh);
         }
 
