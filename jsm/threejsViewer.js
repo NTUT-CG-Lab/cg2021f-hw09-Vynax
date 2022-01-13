@@ -31,14 +31,14 @@ class threejsViewer {
 
         // Light
         let directionalLight = new THREE.DirectionalLight(0xffffff, 1)
-        directionalLight.position.set(2, 1, 2)   
+        directionalLight.position.set(2, 1, 2)
         this.scene.add(directionalLight)
 
         // Controller
         let controller = new OrbitControls(this.camera, this.renderer.domElement)
         controller.target.set(0, 0.5, 0)
         controller.update()
-        
+
         //Axis Landmark
         const axesHelper = new THREE.AxesHelper(100)
         this.scene.add(axesHelper)
@@ -46,7 +46,7 @@ class threejsViewer {
         // Ground
         const plane = new THREE.Mesh(
             new THREE.CircleGeometry(2, 30),
-            new THREE.MeshPhongMaterial({ color: 0xbbddff, opacity:0.4, transparent: true })
+            new THREE.MeshPhongMaterial({ color: 0xbbddff, opacity: 0.4, transparent: true })
         );
         plane.rotation.x = - Math.PI / 2;
         this.scene.add(plane);
@@ -68,6 +68,20 @@ class threejsViewer {
             this.camera.aspect = width / height
             this.camera.updateProjectionMatrix();
         })
+        let mesh = null;
+        this.loadData = (paddingData, size, isovalue) => {
+            mesh = new MarchingCubes(size);
+            mesh.material = new THREE.MeshPhongMaterial();
+            mesh.isolation = isovalue;
+            mesh.field = paddingData;
+
+            this.scene.add(mesh);
+        }
+
+        this.download = () => {
+            mesh.generateGeometry();
+            return mesh;
+        }
 
         this.renderScene()
     }
